@@ -1,0 +1,22 @@
+name: 'build-test'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          clientId: ${{ secrets.CLIENT_ID }}
+          clientSecret: ${{ secrets.CLIENT_SECRET }}
+          tenantId: ${{ secrets.TENANT_ID }}
+          subject: 'Review pull request'
+          body: 'A new PR has been submitted on ${{ github.repository }} from ${{ github.actor }}. Please review it.'
+          userEmail: 'anoop@anoopccdev1.onmicrosoft.com'
+          start: '2021-07-06T14:30:00'
+          end: '2021-07-06T15:00:00'
