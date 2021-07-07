@@ -39,7 +39,7 @@ jobs:
         tenantId: ${{ secrets.TENANT_ID }}
         subject: 'Review pull request'
         body: 'A new PR has been submitted on ${{ github.repository }} from ${{ github.actor }}. Please review it.'
-        emailaddress: 'user@contoso.onmicrosoft.com'
+        userEmail: 'user@contoso.onmicrosoft.com'
 ```
 
 When there is a pull request, the above workflow will create an event for user 'user@contoso.onmicrosoft.com' on the next day from 12:00 to 13:00 (automatic as no start or end is specified).  
@@ -72,7 +72,7 @@ jobs:
         tenantId: ${{ secrets.TENANT_ID }}
         subject: 'Code pushed'
         body: 'Some files have been pushed on ${{ github.repository }} from ${{ github.actor }}. Please find the details here ${{ github.event.compare }}.'
-        emailaddress: 'user@contoso.onmicrosoft.com'
+        userEmail: 'user@contoso.onmicrosoft.com'
         start: '2019-12-04T14:30:00'
         end: '2019-12-04T15:00:00'
 ```
