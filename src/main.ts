@@ -14,34 +14,47 @@ async function run() {
     const body: string = core.getInput('body', { required: true });
     const userEmail: string = core.getInput('userEmail', { required: true });
 
-    const graph = new Graph(
-        clientId,
-        clientSecret,
-        tenantId
-    );
+    let proceed: boolean = false;
 
-    const nextDay: string = format(addBusinessDays(new Date(), 1), 'yyyy-MM-dd');
-    const startTime: string = start ? start : `${nextDay}T12:00:00`;
-    const endTime: string = end ? end : `${nextDay}T13:00:00`;
+    if (clientId && clientSecret && tenantId
+        && subject && body && userEmail) {
+        proceed = true;
+    }
 
-    const event: Event = {
-        subject,
-        body: {
-            contentType: "html",
-            content: `${body}<br/>Request submitted around ${format(new Date(), 'dd-MMM-yyyy HH:mm')}`
-        },
-        start: {
-            dateTime: startTime,
-            timeZone: "GMT Standard Time"
-        },
-        end: {
-            dateTime: endTime,
-            timeZone: "GMT Standard Time"
-        }
-    };
+    if (proceed) {
+        const graph = new Graph(
+            clientId,
+            clientSecret,
+            tenantId
+        );
 
-    const result: any = await graph.createEvent(event, userEmail);
-    core.setOutput('event', result);
+        const nextDay: string = format(addBusinessDays(new Date(), 1), 'yyyy-MM-dd');
+        const startTime: string = start ? start : `${nextDay}T12:00:00`;
+        const endTime: string = end ? end : `${nextDay}T13:00:00`;
+
+        const event: Event = {
+            subject,
+            body: {
+                contentType: "html",
+                content: `${body}<br/>Request submitted around ${format(new Date(), 'dd-MMM-yyyy HH:mm')}`
+            },
+            start: {
+                dateTime: startTime,
+                timeZone: "GMT Standard Time"
+            },
+            end: {
+                dateTime: endTime,
+                timeZone: "GMT Standard Time"
+            }
+        };
+
+        const result: any = await graph.createEvent(event, userEmail);
+        core.setOutput('event', result);
+    } else {
+        core.error("\u001b[91m🚨 One or more inputs are missing.");
+        core.setFailed("One or more inputs are missing.");
+        core.setOutput('event', null);
+    }
 }
 
 run();
