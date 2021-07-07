@@ -225,39 +225,27 @@ function run() {
         const subject = core.getInput('subject', { required: true });
         const body = core.getInput('body', { required: true });
         const userEmail = core.getInput('userEmail', { required: true });
-        let proceed = false;
-        if (clientId && clientSecret && tenantId
-            && subject && body && userEmail) {
-            proceed = true;
-        }
-        if (proceed) {
-            const graph = new graph_1.default(clientId, clientSecret, tenantId);
-            const nextDay = date_fns_1.format(date_fns_1.addBusinessDays(new Date(), 1), 'yyyy-MM-dd');
-            const startTime = start ? start : `${nextDay}T12:00:00`;
-            const endTime = end ? end : `${nextDay}T13:00:00`;
-            const event = {
-                subject,
-                body: {
-                    contentType: "html",
-                    content: `${body}<br/>Request submitted around ${date_fns_1.format(new Date(), 'dd-MMM-yyyy HH:mm')}`
-                },
-                start: {
-                    dateTime: startTime,
-                    timeZone: "GMT Standard Time"
-                },
-                end: {
-                    dateTime: endTime,
-                    timeZone: "GMT Standard Time"
-                }
-            };
-            const result = yield graph.createEvent(event, userEmail);
-            core.setOutput('event', result);
-        }
-        else {
-            core.error("\u001b[91m🚨 One or more inputs are missing.");
-            core.setFailed("One or more inputs are missing.");
-            core.setOutput('event', null);
-        }
+        const graph = new graph_1.default(clientId, clientSecret, tenantId);
+        const nextDay = date_fns_1.format(date_fns_1.addBusinessDays(new Date(), 1), 'yyyy-MM-dd');
+        const startTime = start ? start : `${nextDay}T12:00:00`;
+        const endTime = end ? end : `${nextDay}T13:00:00`;
+        const event = {
+            subject,
+            body: {
+                contentType: "html",
+                content: `${body}<br/>Request submitted around ${date_fns_1.format(new Date(), 'dd-MMM-yyyy HH:mm')}`
+            },
+            start: {
+                dateTime: startTime,
+                timeZone: "GMT Standard Time"
+            },
+            end: {
+                dateTime: endTime,
+                timeZone: "GMT Standard Time"
+            }
+        };
+        const result = yield graph.createEvent(event, userEmail);
+        core.setOutput('event', result);
     });
 }
 run();
